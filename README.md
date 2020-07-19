@@ -2,7 +2,7 @@
 Forecasting Retail Sales from year 1992-2020. The data has been downloaded from https://fred.stlouisfed.org/series/RSXFS.
 
 Preparing the Data for EXPLORATION:
-Knowing that there has been inflation in the last 25 years, we read in the Consumer Index Value(CPIAUCSL) to adjust for inflation.The whole series then will be considered according to the 2020'$'rate.
+Knowing that there has been inflation in the last 25 years, I read in the Consumer Index Value(CPIAUCSL) to adjust for inflation.The whole series will be considered according to the 2020'$'rate.
 This is an important step otherwise we would be considering the change in sales & change in inflation all wraped into one. Forecasting the future sales will then be according to the current dollar value rate.
 
 Data DESCRIPTION:
