@@ -1,0 +1,82 @@
+#############################
+#This file loads monthly retail & food service sales by day.
+#This data has been adjusted for inflation.
+#We will use data to forecast the next two years of sales per day.
+##############################
+
+rm(list=ls())
+
+
+#Load forecasting package
+install.packages('fpp2')
+library(fpp2)
+
+#Load data
+data=read.csv('file:///C:/Users/Swathi/Downloads/ForecastRetailSales.csv')
+summary(data)
+head(data)
+#Declare this as time series data
+Y=ts(data[,7],start=c(1992,1),frequency = 12)
+
+####################
+#Preliminary Analysis
+#####################
+#Time Plot
+autoplot(Y)+
+  ggtitle("Time Plot: Real Retail Sales Per Day")+
+  ylab("Millions of 1992-2020 CPI Adjusted Dollars")
+
+#Take the first difference of the data to remove trend. CHange of sales per month
+DY=diff(Y)
+autoplot(DY)+
+  ggtitle("Time Plot:Changein Real Retail Sales Per Day")+
+  ylab("Millions of 1992-2020 CPI Adjusted Dollars")
+
+#Series appears trend-stationary, use to investigate seasonality
+ggseasonplot(DY)+ ggtitle('Seasonal Plot: Change in Daily Retail sales')+
+  ylab('Millions of 1992-2020 CPI Adjusted Dollars')
+
+
+
+
+
+
+#Let's look at subseries seasonal plot
+ggsubseriesplot(DY)- #Blue line is average
+################################################
+#Our seies, Y, has trend and seasonality.
+#To remove the trend, we take the first difference.
+#The first differenced series still has seasonality.
+
+#forecast with various methods
+##################################################
+
+######
+#Use a benchmark method to forecast. Take mean and then forecast-every month in future will be same
+#Let's use the seasonal naive method as benchmark- value of data in jan 1994 will be equal to jan 1993 with some error.
+###################
+fit=snaive(DY) #ResidualSd= 266.9311 Benchmark
+print(summary(fit))
+checkresiduals(fit)
+
+############################
+#Exponential smoothing model
+############################
+fit_ets=ets(Y)
+print(summary(fit_ets))
+checkresiduals(fit_ets)
+
+
+#########################
+#ARIMA Model
+###########################
+fit_arima=auto.arima(Y,d=1,D=1, stepwise = FALSE,
+                     approximation = FALSE, trace=TRUE)  #take first diff of the data
+print(summary(fit_arima))
+checkresiduals(fit_arima)
+###########################
+#Forecasting with ARIMA Model
+#############################
+fcst=forecast(fit_arima,h=24)
+autoplot(fcst,include=60)
+print(summary(fcst))
